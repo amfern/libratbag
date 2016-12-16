@@ -48,6 +48,28 @@ udev_device_from_path(struct udev *udev, const char *path)
 	return udev_device;
 }
 
+const char *
+led_mode_to_str(enum ratbag_led_mode mode)
+{
+	const char *str = "UNKNOWN";
+	switch (mode) {
+	case RATBAG_LED_OFF:
+		str = "off";
+		break;
+	case RATBAG_LED_ON:
+		str = "on";
+		break;
+	case RATBAG_LED_CYCLE:
+		str = "cycle";
+		break;
+	case RATBAG_LED_BREATHING:
+		str = "pulse";
+		break;
+	}
+
+	return str;
+}
+
 const char*
 button_type_to_str(enum ratbag_button_type type)
 {

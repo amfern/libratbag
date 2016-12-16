@@ -30,11 +30,23 @@
 #include "libratbag-test.h"
 
 static void
+test_read_led(struct ratbag_led *led, struct ratbag_test_led test_led)
+{
+	led->mode = test_led.mode;
+	led->color.red = test_led.color.red;
+	led->color.green = test_led.color.green;
+	led->color.blue = test_led.color.blue;
+	led->hz = test_led.hz;
+	led->brightness = test_led.brightness;
+}
+
+static void
 test_read_profile(struct ratbag_profile *profile, unsigned int index)
 {
 	struct ratbag_test_device *d = ratbag_get_drv_data(profile->device);
 	struct ratbag_test_profile *p;
 	struct ratbag_test_resolution *r;
+	struct ratbag_led *led;
 	unsigned int i;
 
 	assert(index < d->num_profiles);
@@ -53,6 +65,12 @@ test_read_profile(struct ratbag_profile *profile, unsigned int index)
 	}
 
 	profile->is_active = p->active;
+
+	list_for_each(led, &profile->leds, link) {
+		test_read_led(led, p->leds[i]);
+		i++;
+	}
+	assert(i == 2);
 }
 
 static int
@@ -146,7 +164,8 @@ test_probe(struct ratbag_device *device, void *data)
 	ratbag_device_init_profiles(device,
 				    test_device->num_profiles,
 				    test_device->num_resolutions,
-				    test_device->num_buttons);
+				    test_device->num_buttons,
+				    test_device->num_leds);
 	if (test_device->num_profiles > 1)
 		ratbag_device_set_capability(device, RATBAG_DEVICE_CAP_BUTTON_MACROS);
 

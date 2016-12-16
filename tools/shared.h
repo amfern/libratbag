@@ -60,6 +60,9 @@ const char*
 button_type_to_str(enum ratbag_button_type type);
 
 const char *
+led_mode_to_str(enum ratbag_led_mode mode);
+
+const char *
 button_action_special_to_str(struct ratbag_button *button);
 
 char *
