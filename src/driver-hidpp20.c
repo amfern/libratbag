@@ -392,13 +392,8 @@ hidpp20drv_write_led(struct ratbag_led *led,
 	struct hidpp20_profile *h_profile;
 	struct hidpp20_led *h_led;
 
-	assert("aaaa");
-	/* Please don't leave comments like this in the code. If there is a legitimate reason for it to be here, then document why. Otherwise, just leave them out. One example for such a reason would be a check that should be there but doesn't do the right thing. In this case you comment why the check isn't there so that lateron we don't add the check to the code. For example, this would be legitimate: */
-  /*                                                                                                                                                                                                                                               fwiw, I have an old branch wip/hidpp20-led-support here: */
-  /*                                                                                                                                                                                                                                               https://github.com/whot/libratbag/tree/wip/hidpp20-led-support */
-  /*                                                                                                                                                                                                                                               that may contain some other useful bits, though last I remember it wasn't working and then I got side-tracked. */
-	/* if (!(drv_data->capabilities & HIDPP_CAP_BUTTON_KEY_1b04)) */
-	/* 	return -ENTSUP; */
+	if (!(drv_data->capabilities & HIDPP_CAP_COLOR_LED_EFFECTS_8070))
+		return -ENOTSUP;
 
 	h_profile = &drv_data->profiles->profiles[profile->index];
 
@@ -420,15 +415,10 @@ hidpp20drv_write_led(struct ratbag_led *led,
 	default:
 		h_led->mode = HIDPP20_LED_OFF;
 	}
-	/* normalized between 0 and 1.0 */
-	/* in second though using doubles introduces cross platform compatibilities issues, */
-	/* that i am not comfortable vernturing into at this point. */
-	/* consult with the maintainers how to proceed, maybe cross platform is not an issue */
 	h_led->color.red = color.red;
 	h_led->color.green = color.green;
 	h_led->color.blue = color.blue;
 	h_led->rate = hz;
-	// brightness is set in percentage
 	h_led->brightness = brightness / 255 * 100;
 
 	return hidpp20_onboard_profiles_write(drv_data->dev, profile->index,
