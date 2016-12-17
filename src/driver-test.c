@@ -30,17 +30,6 @@
 #include "libratbag-test.h"
 
 static void
-test_read_led(struct ratbag_led *led, struct ratbag_test_led test_led)
-{
-	led->mode = test_led.mode;
-	led->color.red = test_led.color.red;
-	led->color.green = test_led.color.green;
-	led->color.blue = test_led.color.blue;
-	led->hz = test_led.hz;
-	led->brightness = test_led.brightness;
-}
-
-static void
 test_read_profile(struct ratbag_profile *profile, unsigned int index)
 {
 	struct ratbag_test_device *d = ratbag_get_drv_data(profile->device);
@@ -65,12 +54,6 @@ test_read_profile(struct ratbag_profile *profile, unsigned int index)
 	}
 
 	profile->is_active = p->active;
-
-	list_for_each(led, &profile->leds, link) {
-		test_read_led(led, p->leds[i]);
-		i++;
-	}
-	assert(i == 2);
 }
 
 static int
@@ -140,12 +123,51 @@ test_read_button(struct ratbag_button *button)
 	ratbag_button_enable_action_type(button, RATBAG_BUTTON_ACTION_TYPE_MACRO);
 }
 
+static void
+test_read_led(struct ratbag_led *led, struct ratbag_test_led test_led)
+{
+  struct ratbag_device *device = led->profile->device;
+  struct ratbag_test_device *d = ratbag_get_drv_data(device);
+	struct ratbag_test_profile *p = &d->profiles[led->profile->index];
+  struct ratbag_test_led t_led = p->leds[led->index];
+
+  switch (t_led.mode) {
+  case RATBAG_LED_ON:
+	  led->mode = RATBAG_LED_ON;
+	  break;
+  case RATBAG_LED_CYCLE:
+	  led->mode = RATBAG_LED_CYCLE;
+	  break;
+  case RATBAG_LED_BREATHING:
+	  led->mode = RATBAG_LED_BREATHING;
+	  break;
+  default:
+	  led->mode = RATBAG_LED_OFF;
+	}
+	led->color.red = t_led.color.red;
+	led->color.green = t_led.color.green;
+	led->color.blue = t_led.color.blue;
+	led->hz = t_led.hz;
+	led->brightness = 255 * t_led.brightness / 100;
+}
+
 static int
 test_write_button(struct ratbag_button *button,
 		  const struct ratbag_button_action *action)
 {
 	/* check if the device is still valid */
 	assert(ratbag_get_drv_data(button->profile->device) != NULL);
+	return 0;
+}
+
+static int
+test_write_led(struct ratbag_led *led,
+	       enum ratbag_led_mode mode,
+	       struct ratbag_color color, unsigned int hz,
+	       unsigned int brightness)
+{
+	/* check if the device is still valid */
+	assert(ratbag_get_drv_data(led->profile->device) != NULL);
 	return 0;
 }
 
@@ -194,6 +216,8 @@ struct ratbag_driver test_driver = {
 	.write_profile = test_write_profile,
 	.set_active_profile = test_set_active_profile,
 	.read_button = test_read_button,
+  .read_led = test_read_led,
 	.write_button = test_write_button,
 	.write_resolution_dpi = NULL,
+  // .write_led = test_write_led,
 };

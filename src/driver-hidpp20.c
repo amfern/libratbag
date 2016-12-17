@@ -273,7 +273,6 @@ hidpp20drv_read_led(struct ratbag_led *led)
 	led->color.green = h_led->color.green;
 	led->color.blue = h_led->color.blue;
 	led->hz = h_led->rate;
-	// brightness is in percentage
 	led->brightness = 255 / h_led->brightness * 100;
 }
 
@@ -695,6 +694,19 @@ hidpp20drv_read_profile_8100(struct ratbag_profile *profile, unsigned int index)
 					     p->dpi[i],
 					     p->dpi[i],
 					     p->report_rate);
+
+		if (profile->is_active &&
+		    res->dpi_x == dpi)
+			res->is_active = true;
+		if (i == p->default_dpi)
+			res->is_default = true;
+	}
+
+  for (i = 0; i < profile->resolution.num_modes; i++) {
+		res = ratbag_resolution_init(profile, i,
+                                 p->dpi[i],
+                                 p->dpi[i],
+                                 p->report_rate);
 
 		if (profile->is_active &&
 		    res->dpi_x == dpi)

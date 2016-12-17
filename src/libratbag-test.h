@@ -57,10 +57,10 @@ struct ratbag_test_color {
 
 struct ratbag_test_led {
 	enum ratbag_led_type type;
-	enum ratbag_led_mode mode;      /**< off; on; cycle; breath  */
-	struct ratbag_test_color color; /**< led color  */
-	unsigned int hz;		/**< rate of action 100 - 20000 */
-	unsigned int brightness;		/**< brightness of the LED 1 - 100 */
+	enum ratbag_led_mode mode;
+	struct ratbag_test_color color;
+	unsigned int hz;
+	unsigned int brightness;
 };
 
 struct ratbag_test_profile {
