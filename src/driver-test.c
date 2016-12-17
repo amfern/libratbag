@@ -148,7 +148,7 @@ test_read_led(struct ratbag_led *led, struct ratbag_test_led test_led)
 	led->color.green = t_led.color.green;
 	led->color.blue = t_led.color.blue;
 	led->hz = t_led.hz;
-	led->brightness = 255 * t_led.brightness / 100;
+	led->brightness = t_led.brightness;
 }
 
 static int
@@ -219,5 +219,5 @@ struct ratbag_driver test_driver = {
   .read_led = test_read_led,
 	.write_button = test_write_button,
 	.write_resolution_dpi = NULL,
-  // .write_led = test_write_led,
+  .write_led = test_write_led,
 };

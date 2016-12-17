@@ -82,15 +82,15 @@ const struct ratbag_test_device sane_device = {
 		.leds = {
 		{
 						.mode = RATBAG_LED_ON,
-						.color = { .red = 255, .green = 00,	.blue = 00 },
+						.color = { .red = 255, .green = 0,	.blue = 0 },
 						.hz = 1,
-						.brightness = 2
+						.brightness = 20
 				},
 				{
 						.mode = RATBAG_LED_CYCLE,
-						.color = { .red = 255, .green = 255, .blue = 00 },
+						.color = { .red = 255, .green = 255, .blue = 0 },
 						.hz = 3,
-						.brightness = 4
+						.brightness = 40
 				}
 		},
 		.active = false,
@@ -791,7 +791,7 @@ START_TEST(device_leds)
 	struct ratbag *r;
 	struct ratbag_device *d;
 	struct ratbag_profile *p;
-	struct ratbag_led *l;
+	struct ratbag_led *led_logo, *led_side;
 	int nprofiles;
 	int device_freed_count = 0;
 
@@ -808,13 +808,14 @@ START_TEST(device_leds)
 	p = ratbag_device_get_profile(d, 2);
 	ck_assert(p != NULL);
 
-	l = ratbag_profile_get_led(p, RATBAG_LED_TYPE_LOGO);
-	assert_led(l, td.profiles[2].leds[RATBAG_LED_TYPE_LOGO]);
-	/* l = ratbag_profile_get_led(p, RATBAG_LED_TYPE_SIDE); */
-	/* assert_led(l, td.profiles[2].leds[RATBAG_LED_TYPE_SIDE]); */
+	led_logo = ratbag_profile_get_led(p, RATBAG_LED_TYPE_LOGO);
+	assert_led(led_logo, td.profiles[2].leds[RATBAG_LED_TYPE_LOGO]);
+	led_side = ratbag_profile_get_led(p, RATBAG_LED_TYPE_SIDE);
+	assert_led(led_side, td.profiles[2].leds[RATBAG_LED_TYPE_SIDE]);
 
+  ratbag_led_unref(led_logo);
+  ratbag_led_unref(led_side);
 	ratbag_profile_unref(p);
-
 	ratbag_device_unref(d);
 	ratbag_unref(r);
 	ck_assert_int_eq(device_freed_count, 1);
@@ -865,10 +866,13 @@ START_TEST(device_leds_set)
 			.blue = c.blue
 		},
 		.hz = 11,
-		.brightness = 22};
+		.brightness = 22
+  };
 	assert_led(l, e_l);
-	ratbag_profile_unref(p);
 
+  ratbag_led_unref(l);
+  ratbag_led_unref(l);
+	ratbag_profile_unref(p);
 	ratbag_device_unref(d);
 	ratbag_unref(r);
 	ck_assert_int_eq(device_freed_count, 1);
@@ -915,7 +919,7 @@ test_context_suite(void)
 
 	tc = tcase_create("led");
 	tcase_add_test(tc, device_leds);
-	/* tcase_add_test(tc, device_leds_set); */
+	tcase_add_test(tc, device_leds_set);
 	suite_add_tcase(s, tc);
 
 	return s;

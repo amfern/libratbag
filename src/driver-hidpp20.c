@@ -273,7 +273,7 @@ hidpp20drv_read_led(struct ratbag_led *led)
 	led->color.green = h_led->color.green;
 	led->color.blue = h_led->color.blue;
 	led->hz = h_led->rate;
-	led->brightness = 255 / h_led->brightness * 100;
+	led->brightness = 255.0 / h_led->brightness * 100;
 }
 
 static int
@@ -418,7 +418,7 @@ hidpp20drv_write_led(struct ratbag_led *led,
 	h_led->color.green = color.green;
 	h_led->color.blue = color.blue;
 	h_led->rate = hz;
-	h_led->brightness = brightness / 255 * 100;
+	h_led->brightness = brightness / 255.0 * 100;
 
 	return hidpp20_onboard_profiles_write(drv_data->dev, profile->index,
 					      drv_data->profiles);

@@ -689,6 +689,9 @@ ratbag_device_init_profiles(struct ratbag_device *device,
 	if (num_resolutions > 1)
 		ratbag_device_set_capability(device, RATBAG_DEVICE_CAP_SWITCHABLE_RESOLUTION);
 
+	if (num_leds > 1)
+		ratbag_device_set_capability(device, RATBAG_DEVICE_CAP_LED);
+
 	return 0;
 }
 
