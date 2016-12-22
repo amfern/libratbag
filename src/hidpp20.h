@@ -118,10 +118,10 @@ enum hidpp20_battery_status {
 };
 
 enum hidpp20_led_mode {
-	HIDPP20_LED_OFF = 0,
-	HIDPP20_LED_ON = 1,
-	HIDPP20_LED_CYCLE = 03,
-	HIDPP20_LED_BREATHING = 10,
+	HIDPP20_LED_OFF = 0x00,
+	HIDPP20_LED_ON = 0x01,
+	HIDPP20_LED_CYCLE = 0x03,
+	HIDPP20_LED_BREATHING = 0x0a,
 };
 
 /**
@@ -335,7 +335,7 @@ _Static_assert(sizeof(struct hidpp20_color) == 3, "Invalid size");
 enum hidpp20_led_type {
 	HIDPP20_LED_UNKNOWN = -1,
 	HIDPP20_LED_LOGO = 0,
-	HIDPP20_LED_SIDE
+	HIDPP20_LED_SIDE,
 };
 
 struct hidpp20_internal_led {
