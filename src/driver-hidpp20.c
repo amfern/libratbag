@@ -273,7 +273,7 @@ hidpp20drv_read_led(struct ratbag_led *led)
 	led->color.green = h_led->color.green;
 	led->color.blue = h_led->color.blue;
 	led->hz = h_led->rate;
-	led->brightness = 255.0 / h_led->brightness * 100;
+	led->brightness = h_led->brightness * 255.0 / 100;
 }
 
 static int

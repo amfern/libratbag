@@ -1785,8 +1785,8 @@ ratbag_button_unref(struct ratbag_button *led);
    * @param led A previously initialized valid ratbag led
    * @return The passed ratbag led
    */
-  struct ratbag_led *
-  ratbag_led_ref(struct ratbag_led *led);
+struct ratbag_led *
+ratbag_led_ref(struct ratbag_led *led);
 
   /**
    * @ingroup led
@@ -1798,8 +1798,8 @@ ratbag_button_unref(struct ratbag_button *led);
    * @param led A previously initialized ratbag led
    * @return Always NULL
    */
-  struct ratbag_led *
-  ratbag_led_unref(struct ratbag_led *led);
+struct ratbag_led *
+ratbag_led_unref(struct ratbag_led *led);
 
 #ifdef __cplusplus
 }

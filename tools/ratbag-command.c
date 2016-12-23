@@ -1718,8 +1718,6 @@ ratbag_cmd_led(const struct ratbag_cmd *cmd,
 	rc = run_subcommand(argv[0], cmd, ratbag, options,
 			    argc, argv);
 
-	ratbag_led_unref(led);
-
 	return rc;
 }
 
