@@ -1591,12 +1591,16 @@ ratbag_cmd_led_set_mode(const struct ratbag_cmd *cmd,
 
 	if (streq(str, "off"))
 		mode = RATBAG_LED_OFF;
-	if (streq(str, "on"))
+	else if (streq(str, "on"))
 		mode = RATBAG_LED_ON;
-	if (streq(str, "cycle"))
+	else if (streq(str, "cycle"))
 		mode = RATBAG_LED_CYCLE;
-	if (streq(str, "breathing"))
+	else if (streq(str, "breathing"))
 		mode = RATBAG_LED_BREATHING;
+  else {
+	  usage();
+	  return ERR_USAGE;
+  }
 
 	/* set default rate and brightness */
 	switch (mode) {
