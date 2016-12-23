@@ -62,6 +62,7 @@ struct hidpp20drv_data {
 	unsigned num_controls;
 	struct hidpp20_control_id *controls;
 	struct hidpp20_profiles *profiles;
+  struct hidpp20_color_led_zone_info *led_infos;
 
 	unsigned int num_profiles;
 	unsigned int num_resolutions;
@@ -651,6 +652,29 @@ hidpp20drv_read_kbd_reprogrammable_key(struct ratbag_device *device)
 }
 
 static int
+hidpp20drv_read_color_leds(struct ratbag_device *device)
+{
+	struct hidpp20drv_data *drv_data = ratbag_get_drv_data(device);
+	int rc;
+
+	if (!(drv_data->capabilities & HIDPP_CAP_COLOR_LED_EFFECTS_8070))
+		return 0;
+
+	free(drv_data->led_infos);
+	drv_data->led_infos = NULL;
+	drv_data->num_leds = 0;
+
+  rc = hidpp20_color_led_effects_get_zone_infos(drv_data->dev, &drv_data->led_infos);
+
+  if (rc > 0) {
+		drv_data->num_leds = rc;
+		rc = 0;
+	}
+
+  return rc;
+}
+
+static int
 hidpp20drv_read_onboard_profile(struct ratbag_device *device, unsigned index)
 {
 	struct hidpp20drv_data *drv_data = ratbag_get_drv_data(device);
@@ -817,9 +841,8 @@ hidpp20drv_init_feature(struct ratbag_device *device, uint16_t feature)
 
 		/* we read the profile once to get the correct number of
 		 * supported leds. */
-		/* if (!hidpp20drv_read_color_leds(device)) */
-		/* 	device->num_leds = drv_data->num_leds; */
-		device->num_leds = 2; // TODO: we should fetch it from the mouse
+		if (!hidpp20drv_read_color_leds(device))
+			device->num_leds = drv_data->num_leds;
 		break;
 	}
 	case HIDPP_PAGE_ONBOARD_PROFILES: {
