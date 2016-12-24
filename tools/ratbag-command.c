@@ -338,9 +338,11 @@ ratbag_cmd_info(const struct ratbag_cmd *cmd,
 	struct ratbag_device *device;
 	struct ratbag_profile *profile;
 	struct ratbag_button *button;
+  struct ratbag_led *led;
 	char *action;
-	int num_profiles, num_buttons;
-	int i, j, b;
+	int num_profiles, num_buttons, num_leds;
+	int i, j, b, l;
+	struct ratbag_color color;
 
 	device = options->device;
 
@@ -359,10 +361,16 @@ ratbag_cmd_info(const struct ratbag_cmd *cmd,
 	if (ratbag_device_has_capability(device,
 					 RATBAG_DEVICE_CAP_BUTTON_MACROS))
 		printf(" btn-macros");
+	if (ratbag_device_has_capability(device,
+					 RATBAG_DEVICE_CAP_LED))
+		printf(" led");
 	printf("\n");
 
 	num_buttons = ratbag_device_get_num_buttons(device);
 	printf("Number of buttons: %d\n", num_buttons);
+
+  num_leds = ratbag_device_get_num_leds(device);
+	printf("Number of leds: %d\n", num_leds);
 
 	num_profiles = ratbag_device_get_num_profiles(device);
 	printf("Profiles supported: %d\n", num_profiles);
@@ -411,6 +419,21 @@ ratbag_cmd_info(const struct ratbag_cmd *cmd,
 			       b, button_type_to_str(type), action);
 			free(action);
 			button = ratbag_button_unref(button);
+		}
+
+		for (l = 0; l < num_leds; l++) {
+			led = ratbag_profile_get_led(profile, l);
+			color = ratbag_led_get_color(led);
+
+			printf("    LED: %d type %s mode %s color %02x%02x%02x rate %d brightness: %d\n",
+			       l,
+             led_type_to_str(ratbag_led_get_type(led)),
+             led_mode_to_str(ratbag_led_get_mode(led)),
+			       color.red, color.green, color.blue,
+			       ratbag_led_get_rate(led),
+			       ratbag_led_get_brightness(led));
+
+			led = ratbag_led_unref(led);
 		}
 
 		profile = ratbag_profile_unref(profile);
@@ -1665,21 +1688,24 @@ ratbag_cmd_led_get(const struct ratbag_cmd *cmd,
 		   int argc, char **argv)
 {
 	struct ratbag_led *led;
-	enum ratbag_led_type type;
-	const char *action;
 	enum ratbag_led_mode mode;
 	struct ratbag_color color;
 	int hz;
 	int brightness;
+  enum ratbag_led_type type;
 
 	led = options->led;
 
+  type = ratbag_led_get_type(led);
 	mode = ratbag_led_get_mode(led);
 	color = ratbag_led_get_color(led);
 	hz = ratbag_led_get_rate(led);
 	brightness = ratbag_led_get_brightness(led);
-	printf("mode: %s, color: %02x%02x%02x, rate: %d, brightness: %d\n",
-	       led_mode_to_str(mode), color.red, color.green, color.blue, hz, brightness);
+	printf("type: %s, mode: %s, color: %02x%02x%02x, rate: %d, brightness: %d\n",
+	       led_type_to_str(type),
+	       led_mode_to_str(mode),
+	       color.red, color.green, color.blue,
+	       hz, brightness);
 
 	return SUCCESS;
 }

@@ -47,6 +47,7 @@ global:
 	ratbag_log_set_priority;
 	ratbag_profile_get_led;
 	ratbag_led_get_mode;
+  ratbag_led_get_type;
 	ratbag_led_get_color;
 	ratbag_led_get_rate;
 	ratbag_led_get_brightness;
@@ -56,6 +57,7 @@ global:
 	ratbag_led_set_rate;
 	ratbag_led_set_brightness;
 	ratbag_led_unref;
+  ratbag_device_get_num_leds;
 	ratbag_profile_get_button;
 	ratbag_profile_get_num_resolutions;
 	ratbag_profile_get_resolution;

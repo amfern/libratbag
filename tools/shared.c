@@ -48,6 +48,26 @@ udev_device_from_path(struct udev *udev, const char *path)
 	return udev_device;
 }
 
+const char*
+led_type_to_str(enum ratbag_led_type type)
+{
+	const char *str = "UNKNOWN";
+
+	switch(type) {
+	case RATBAG_LED_TYPE_UNKNOWN:
+		str = "unknown";
+		break;
+	case RATBAG_LED_TYPE_LOGO:
+		str = "logo";
+		break;
+	case RATBAG_LED_TYPE_SIDE:
+		str = "side";
+		break;
+	}
+
+	return str;
+}
+
 const char *
 led_mode_to_str(enum ratbag_led_mode mode)
 {

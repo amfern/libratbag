@@ -249,11 +249,13 @@ hidpp20drv_read_led(struct ratbag_led *led)
 	struct ratbag_device *device = led->profile->device;
 	struct hidpp20drv_data *drv_data = ratbag_get_drv_data(device);
 	struct hidpp20_profile *profile;
+  struct hidpp20_color_led_zone_info *led_info;
 	struct hidpp20_led *h_led;
 
 	if (!(drv_data->capabilities & HIDPP_CAP_ONBOARD_PROFILES_8100))
 		return;
 
+  led_info = &drv_data->led_infos[led->index];
 	profile = &drv_data->profiles->profiles[led->profile->index];
 	h_led = &profile->leds[led->index];
 
@@ -270,6 +272,7 @@ hidpp20drv_read_led(struct ratbag_led *led)
 	default:
 		led->mode = RATBAG_LED_OFF;
 	}
+  led->type = hidpp20_8070_get_location_mapping(led_info->location);
 	led->color.red = h_led->color.red;
 	led->color.green = h_led->color.green;
 	led->color.blue = h_led->color.blue;

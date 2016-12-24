@@ -506,26 +506,6 @@ err:
 
 #define CMD_COLOR_LED_EFFECTS_GET_INFO 0x00
 #define CMD_COLOR_LED_EFFECTS_GET_ZONE_INFO 0x10
-/* #define CMD_COLOR_LED_EFFECTS_GET_ZONE_EFFECT_INFO 0x20 */
-/* #define CMD_COLOR_LED_EFFECTS_SET_ZONE_EFFECT 0x30 */
-
-
-struct hidpp20_color_led_info {
-	uint8_t zone_count;
-  /* we don't care about NV capabilities for libratbag, they just
- 	 * indicate sale demo effects */
-	uint16_t nv_caps;
-	uint16_t ext_caps;
-} __attribute__((packed));
-_Static_assert(sizeof(struct hidpp20_color_led_info) == 5, "Invalid size");
-
-struct hidpp20_color_led_zone_info {
-	uint8_t index;
-	uint16_t location;
-	uint8_t num_effects;
-	uint8_t persistency_caps;
-} __attribute__((packed));
-_Static_assert(sizeof(struct hidpp20_color_led_zone_info) == 5, "Invalid size");
 
 static int
 hidpp20_color_led_zones_get_count(struct hidpp20_device *device, uint8_t reg)
@@ -617,9 +597,10 @@ hidpp20_color_led_effects_get_zone_infos(struct hidpp20_device *device,
 			goto err;
 
 		hidpp_log_raw(&device->base,
-			      "led_info %d: location: %d num_effects: %d persistency_caps: 0x%02x\n",
+			      "led_info %d: location: %d type %s num_effects: %d persistency_caps: 0x%02x\n",
 			      info->index,
 			      info->location,
+			      hidpp20_8070_get_location_mapping_name(info->location),
 			      info->num_effects,
 			      info->persistency_caps);
 	}

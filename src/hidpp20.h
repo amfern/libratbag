@@ -361,6 +361,23 @@ union hidpp20_button_binding {
 } __attribute__((packed));
 _Static_assert(sizeof(union hidpp20_button_binding) == 4, "Invalid size");
 
+struct hidpp20_color_led_info {
+	uint8_t zone_count;
+  /* we don't care about NV capabilities for libratbag, they just
+ 	 * indicate sale demo effects */
+	uint16_t nv_caps;
+	uint16_t ext_caps;
+} __attribute__((packed));
+_Static_assert(sizeof(struct hidpp20_color_led_info) == 5, "Invalid size");
+
+struct hidpp20_color_led_zone_info {
+	uint8_t index;
+	uint16_t location;
+	uint8_t num_effects;
+	uint8_t persistency_caps;
+} __attribute__((packed));
+_Static_assert(sizeof(struct hidpp20_color_led_zone_info) == 5, "Invalid size");
+
 struct hidpp20_color {
 	uint8_t red;
 	uint8_t green;
