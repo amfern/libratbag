@@ -95,6 +95,7 @@ struct ratbag_device {
 	struct list profiles;
 
 	unsigned num_buttons;
+	unsigned num_leds;
 
 	void *drv_data;
 
@@ -197,6 +198,21 @@ struct ratbag_driver {
 	int (*write_resolution_dpi)(struct ratbag_resolution *resolution,
 				    int dpi_x, int dpi_y);
 
+	/**
+	 * For the given led, fill in the struct ratbag_led
+	 * with the available information.
+	 */
+	void (*read_led)(struct ratbag_led *led);
+
+	/*
+	 * FIXME: This function is deprecated and should not be removed. Once
+	 * we've updated all the device drivers to stop using it we'll remove
+	 * it. Look at commit() instead.
+	 */
+	int (*write_led)(struct ratbag_led *led, enum ratbag_led_mode mode,
+			 struct ratbag_color color, unsigned int hz,
+			 unsigned int brightness);
+
 	/* private */
 	int (*test_probe)(struct ratbag_device *device, void *data);
 
@@ -215,6 +231,20 @@ struct ratbag_resolution {
 	uint32_t capabilities;
 };
 
+struct ratbag_led {
+	int refcount;
+	void *userdata;
+	struct list link;
+	struct ratbag_profile *profile;
+	unsigned index;
+	enum ratbag_led_type type;
+	enum ratbag_led_mode mode;
+	struct ratbag_color color;
+	unsigned int hz;              /**< rate of action in hz */
+	unsigned int brightness;         /**< brightness of the LED */
+	bool dirty;
+};
+
 struct ratbag_profile {
 	int refcount;
 	void *userdata;
@@ -229,6 +259,7 @@ struct ratbag_profile {
 		struct ratbag_resolution *modes;
 		unsigned int num_modes;
 	} resolution;
+	struct list leds;
 
 	bool is_active;		/**< profile is the currently active one */
 	bool is_enabled;
@@ -334,7 +365,8 @@ int
 ratbag_device_init_profiles(struct ratbag_device *device,
 			    unsigned int num_profiles,
 			    unsigned int num_resolutions,
-			    unsigned int num_buttons);
+			    unsigned int num_buttons,
+			    unsigned int num_leds);
 
 void
 ratbag_device_set_capability(struct ratbag_device *device,
